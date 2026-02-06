@@ -12,7 +12,8 @@
   "type": "commonjs",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsc && electron .",
+    "start": "tsc && xcopy /Y config.json dist\\ && electron .",
+    "dev": "npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -20,6 +21,6 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "nanoid": "^5.1.6"
+    "nanoid": "^3.3.11"
   }
 }

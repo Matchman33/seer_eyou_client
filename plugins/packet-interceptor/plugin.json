@@ -1,0 +1,23 @@
+{
+  "name": "packet-interceptor",
+  "displayName": "封包拦截器",
+  "version": "1.0.0",
+  "author": "大胆猫猫",
+  "description": "拦截并分析游戏封包，支持实时修改",
+  "main": "index.js",
+  "icon": "📦",
+  "ui": {
+    "hasPanel": true,
+    "panelComponent": "PacketPanel",
+    "menuIcon": "📦",
+    "menuLabel": "封包监控"
+  },
+  "permissions": [
+    "game:connect",
+    "game:packet:read",
+    "game:packet:write",
+    "storage:read",
+    "storage:write"
+  ],
+  "keywords": ["packet", "interceptor", "seer"]
+}

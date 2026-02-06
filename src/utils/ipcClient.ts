@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid'
 import net from 'net';
 
 // 定义数据包类型
@@ -74,7 +74,7 @@ export class GameClient {
         };
         this.client.write(JSON.stringify(packet));
     }
-
+    
     /**
      * 发送事件到服务器
      * @param eventName 事件名称

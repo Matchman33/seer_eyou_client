@@ -1,0 +1,24 @@
+{
+  "game": {
+    "serverPort": 3000,
+    "serverHost": "127.0.0.1",
+    "installPath": "D:\\SeerLauncher\\games\\NewSeer",
+    "autoConnect": true
+  },
+  "app": {
+    "windowWidth": 975,
+    "windowHeight": 640,
+    "devServerUrl": "http://localhost:5174",
+    "productionIndex": "./dist-web/index.html"
+  },
+  "plugin": {
+    "storePath": "./seer_magic",
+    "autoLoad": true,
+    "allowedExtensions": [".mjs"]
+  },
+  "security": {
+    "enableDevTools": true,
+    "enableWebSecurity": true,
+    "enableSandbox": false
+  }
+}

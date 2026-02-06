@@ -52,3 +52,43 @@ contextBridge.exposeInMainWorld("$win", {
   // 运行脚本，待运行的脚本必须是一个独立的js文件，后缀为mjs
   runScript: runSeerjsFile,
 });
+
+/**
+ * 暴露插件接口
+ */
+contextBridge.exposeInMainWorld("$plugin", {
+  // 获取所有插件列表
+  getAllPlugins: async () => {
+    return await (global as any).pluginManager?.getAllPlugins() || [];
+  },
+  
+  // 获取单个插件信息
+  getPlugin: async (pluginId: string) => {
+    return await (global as any).pluginManager?.getPlugin(pluginId);
+  },
+  
+  // 启用插件
+  enablePlugin: async (pluginId: string) => {
+    return await (global as any).pluginManager?.activatePlugin(pluginId);
+  },
+  
+  // 禁用插件
+  disablePlugin: async (pluginId: string) => {
+    return await (global as any).pluginManager?.deactivatePlugin(pluginId);
+  },
+  
+  // 卸载插件
+  uninstallPlugin: async (pluginId: string) => {
+    return await (global as any).pluginManager?.uninstallPlugin(pluginId);
+  },
+  
+  // 获取插件API
+  getPluginAPI: (pluginId: string) => {
+    return (global as any).pluginManager?.getPluginAPI(pluginId);
+  },
+  
+  // 执行插件命令
+  executeCommand: async (commandName: string, ...args: any[]) => {
+    return await (global as any).pluginManager?.executeCommand(commandName, ...args);
+  },
+});
