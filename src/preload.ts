@@ -7,66 +7,48 @@ import {
   readSeerjsFiles,
   deleteSeerjsFile,
   renameSeerjsFile,
+  runSeerjsFile,
 } from "./utils/fileUtils";
-import { fork, ForkOptions } from "child_process";
-import { kill } from "process";
+
 console.log("preload.ts loaded");
+
+/**
+ * 暴露插件接口
+ */
 contextBridge.exposeInMainWorld("$game", {
   newGameClient: (port: number = 3000, ip: string = "127.0.0.1") => {
     const game = new GameClient(port, ip);
     return {
-      on: (eventName: string, callback: (...args: any[]) => void) =>
+      on: (eventName: string, callback: (...args: any[]) => any) =>
         game.on(eventName, callback),
       emit: (
         eventName: string,
         params: any,
-        callback: (...args: any[]) => void
+        callback: (...args: any[]) => any,
       ) => game.emit(eventName, params, callback),
       stop: () => game.close(),
     };
   },
 });
 
+/**
+ * 暴露windows接口
+ * 此接口只能让前端用来保存和读取魔法文件，魔法脚本不应该访问此接口
+ */
 contextBridge.exposeInMainWorld("$win", {
-  saveSeerjsFile: async (fileName: string, content: string) => {
-    await saveSeerjsFile(fileName, content);
-  },
-  readSeerjsFile: async (fileName: string) => {
-    return await readSeerjsFile(fileName);
-  },
-  readSeerjsFiles: async () => {
-    return await readSeerjsFiles();
-  },
-  deleteSeerjsFile: async (fileName: string) => {
-    await deleteSeerjsFile(fileName);
-  },
+  saveSeerjsFile,
+  readSeerjsFile,
+  readSeerjsFiles,
+  deleteSeerjsFile,
+  renameSeerjsFile,
   openNewWindow: (
     url: string,
-    options: Electron.BrowserWindowConstructorOptions = {}
+    options: Electron.BrowserWindowConstructorOptions = {},
   ) => {
     const win = new SeerWindow(url, options);
     return win;
   },
-  // 文件重命名
-  renameSeerjsFile: async (oldName: string, newName: string) => {
-    await renameSeerjsFile(oldName, newName);
-  },
 
   // 运行脚本，待运行的脚本必须是一个独立的js文件，后缀为mjs
-  runScript: (
-    modulePath: string | URL,
-    args?: readonly string[],
-    options?: ForkOptions
-  ) => {
-    const child = fork(modulePath, args, options);
-    /**
-     * 返回一个对象，包含子进程的引用和子进程的结束方法
-     */
-    return {
-      child,
-      exit: ()=>kill(child.pid!),
-      addListener: (eventName: string, callback: (...args: any[]) => void) =>
-        child.on(eventName, callback),
-    }
-  },
+  runScript: runSeerjsFile,
 });
