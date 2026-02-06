@@ -1,5 +1,4 @@
 import { contextBridge } from "electron";
-import { GameClient } from "./utils/ipcClient";
 import { SeerWindow } from "./utils/seerWindows";
 import {
   saveSeerjsFile,
@@ -9,6 +8,7 @@ import {
   renameSeerjsFile,
   runSeerjsFile,
 } from "./utils/fileUtils";
+import { GameClient } from "seer_eyou_js";
 
 console.log("preload.ts loaded");
 
