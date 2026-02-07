@@ -25,8 +25,28 @@ export class PluginManager {
   private readonly plugins = new Map<string, LoadedPlugin>();
   private readonly windows = new Map<string, SeerWindow>();
 
-  constructor(pluginsDir: string) {
+  // 单例实例
+  private static instance: PluginManager | null = null;
+
+  private constructor(pluginsDir: string) {
     this.pluginsDir = pluginsDir;
+  }
+
+  /**
+   * 获取单例实例，如果未初始化则自动初始化
+   * @param pluginsDir 插件目录路径（首次调用时必需）
+   * @returns PluginManager 单例实例
+   */
+  static getInstance(pluginsDir?: string): PluginManager {
+    if (PluginManager.instance === null) {
+      if (!pluginsDir) {
+        throw new Error(
+          "PluginManager 未初始化，首次调用 getInstance 必须提供 pluginsDir 参数",
+        );
+      }
+      PluginManager.instance = new PluginManager(pluginsDir);
+    }
+    return PluginManager.instance;
   }
 
   // 扫描并加载所有插件（只加载代码，不代表启用）
@@ -148,11 +168,11 @@ export class PluginManager {
     }
 
     // 内置命令：统一用新窗口打开插件页面
-    if (command === "ui.open") {
-      const pageId = payload?.pageId;
-      if (typeof pageId !== "string" || pageId.length === 0) return;
-      return plugin.ctx.ui.openPage(pageId, payload?.windowOptions);
-    }
+    // if (command === "ui.open") {
+    //   const pageId = payload?.pageId;
+    //   if (typeof pageId !== "string" || pageId.length === 0) return;
+    //   return plugin.ctx.ui.openPage(pageId, payload?.windowOptions);
+    // }
   }
 
   // 启用单个插件
@@ -319,17 +339,17 @@ export class PluginManager {
         // 同时打印时间
         info: (...args) =>
           console.log(
-            `[plugin:${pluginId}] [${new Date().toLocaleString()}]`,
+            `[plugin:${pluginId}-${new Date().toLocaleString()}]`,
             ...args,
           ),
         warn: (...args) =>
           console.warn(
-            `[plugin:${pluginId}] [${new Date().toLocaleString()}]`,
+            `[plugin:${pluginId}-${new Date().toLocaleString()}]`,
             ...args,
           ),
         error: (...args) =>
           console.error(
-            `[plugin:${pluginId}] [${new Date().toLocaleString()}]`,
+            `[plugin:${pluginId}-${new Date().toLocaleString()}]`,
             ...args,
           ),
       },

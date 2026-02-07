@@ -3,12 +3,11 @@ import { SeerWindow } from "./src/utils/seerWindows";
 import path from "path";
 import { PluginManager } from "./src/plugins/pluginManager";
 let seerWindow: SeerWindow | null = null;
-let pluginManager: PluginManager | null = null;
 
 // Electron 启动后初始化：加载插件、启用插件、应用插件菜单
 const onReady = async () => {
   // 插件目录固定为运行目录下的 plugins（process.cwd()/plugins）
-  pluginManager = new PluginManager(path.join(process.cwd(), "plugins"));
+  const pluginManager = PluginManager.getInstance(path.join(process.cwd(), "plugins"));
   await pluginManager.loadAll();
   await pluginManager.enableAll();
   pluginManager.refreshMenu();
@@ -43,7 +42,7 @@ app.on("ready", onReady);
 
 // 退出前做插件清理：关闭插件窗口、触发 onDisable/onUnload
 app.on("before-quit", () => {
-  void pluginManager?.shutdown();
+  void PluginManager.getInstance().shutdown();
 });
 
 app.on("window-all-closed", () => {

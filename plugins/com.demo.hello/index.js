@@ -100,9 +100,16 @@ module.exports = {
         menu: [
           {
             id: "view",
-            label: "视图",
+            label: "子菜单",
             submenu: [
               { id: "reload", label: "刷新", command: "window.reload" },
+              {
+                id: "ping",
+                label: "Ping",
+                command: "ping",
+                payload: { at: Date.now() },
+              },
+
               {
                 id: "devtools",
                 label: "切换开发者工具",
@@ -162,7 +169,6 @@ module.exports = {
       label: "Hello 插件",
       submenu: [
         { id: "open", label: "打开页面", command: "open" },
-        { id: "ping", label: "Ping", command: "ping", payload: { at: Date.now() } },
         {
           id: "Custom",
           label: "打开百度(自定义菜单)",
@@ -187,4 +193,3 @@ module.exports = {
     },
   ],
 };
-

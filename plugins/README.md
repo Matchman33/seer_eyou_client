@@ -85,7 +85,7 @@ commands: {
 说明：
 
 - `command` 为一个字符串，菜单项可通过 `command: string` 指定调用哪个函数
-- `payload` 为菜单项配置中的 `payload` 字段，或宿主注入的额外信息（例如 `windowId`）
+- `payload` 为菜单项配置中的 `payload` 字段，或宿主注入的额外信息（例如 `windowId`）。注意：主窗口菜单点击时，没有 `windowId`。
 
 典型用法：
 
