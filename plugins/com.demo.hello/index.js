@@ -25,6 +25,11 @@ module.exports = {
       ctx.log.info("onLoad");
     },
     onEnable: async (ctx) => {
+      const game = ctx.game.getGameClientInstance();
+      // 监听发包事件
+      game.on("_onLoginCallback", (params) => {
+        ctx.log.info("_onRecvCallback", params);
+      });
       ctx.log.info("onEnable", {
         isDev: ctx.host.isDev,
         pluginId: ctx.plugin.id,
@@ -79,10 +84,9 @@ module.exports = {
       ctx.log.info("storage openCount", next);
     },
     testGameClient: async (ctx) => {
-      const game = ctx.game.newGameClient();
+      const game = ctx.game.getGameClientInstance();
       game.emit("_is_login", {}, (res) => {
         ctx.log.info("testGameClient _is_login result", res);
-        game.stop();
       });
     },
     refreshPluginMenu: async (ctx) => {

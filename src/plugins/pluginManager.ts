@@ -332,6 +332,8 @@ export class PluginManager {
       await fs.writeFile(storagePath, JSON.stringify(data, null, 2), "utf-8");
     };
 
+    let game: GameClient | null = null;
+
     const ctx: PluginContext = {
       host: { isDev: !app.isPackaged },
       plugin: { id: pluginId, dir: pluginDir },
@@ -354,17 +356,23 @@ export class PluginManager {
           ),
       },
       game: {
-        newGameClient: (port: number = 3000, ip: string = "127.0.0.1") => {
-          const game = new GameClient(port, ip);
+        getGameClientInstance: (
+          port: number = 3000,
+          ip: string = "127.0.0.1",
+        ) => {
+          if (!game) game = new GameClient(port, ip);
           return {
             on: (eventName: string, callback: (...args: any[]) => any) =>
-              game.on(eventName, callback),
+              game!.on(eventName, callback),
             emit: (
               eventName: string,
               params: any,
               callback: (...args: any[]) => any,
-            ) => game.emit(eventName, params, callback),
-            stop: () => game.close(),
+            ) => game!.emit(eventName, params, callback),
+            stop: () => {
+              game!.close();
+              game = null;
+            },
           };
         },
       },

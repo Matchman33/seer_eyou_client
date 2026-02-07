@@ -86,7 +86,7 @@ export type PluginContext = {
   };
   // 事件分发统一采用 seer_eyou_js 的 GameClient（与 preload.ts 暴露的 $game 行为一致）
   game: {
-    newGameClient: (
+    getGameClientInstance: (
       port?: number,
       ip?: string,
     ) => {
