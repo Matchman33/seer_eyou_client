@@ -13,8 +13,6 @@ export class SeerWindow extends BrowserWindow {
    * @param options 窗口选项
    */
 
-  public win_url: string;
-
   constructor(
     url: string,
     options: Electron.BrowserWindowConstructorOptions = {},
@@ -40,9 +38,6 @@ export class SeerWindow extends BrowserWindow {
       },
       ...options,
     });
-
-    // 默认窗口大小
-    this.win_url = url;
 
     if (url.startsWith("http")) {
       this.loadURL(url);
