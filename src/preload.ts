@@ -1,5 +1,4 @@
 import { contextBridge } from "electron";
-import { SeerWindow } from "./utils/seerWindows";
 import {
   saveSeerjsFile,
   readSeerjsFile,
@@ -41,14 +40,6 @@ contextBridge.exposeInMainWorld("$win", {
   readSeerjsFiles,
   deleteSeerjsFile,
   renameSeerjsFile,
-  openNewWindow: (
-    url: string,
-    options: Electron.BrowserWindowConstructorOptions = {},
-  ) => {
-    const win = new SeerWindow(url, options);
-    return win;
-  },
-
   // 运行脚本，待运行的脚本必须是一个独立的js文件，后缀为mjs
   runScript: runSeerjsFile,
 });

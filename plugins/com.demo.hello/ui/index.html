@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello 插件页面</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+        padding: 16px;
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      button {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: #fff;
+        cursor: pointer;
+      }
+      pre {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 8px;
+        background: #111;
+        color: #eee;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>这是一个最小可运行的插件页面</h2>
+    <div class="row">
+      <button id="btn-log">写入一条日志</button>
+      <button id="btn-game">连接 GameClient 并查询登录</button>
+    </div>
+
+    <pre id="out">ready</pre>
+
+    <script>
+      const out = document.getElementById("out");
+      const log = (...args) => {
+        const line = args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ");
+        out.textContent = `${out.textContent}\n${line}`;
+      };
+
+      document.getElementById("btn-log").addEventListener("click", () => {
+        log("clicked", new Date().toISOString());
+      });
+
+      document.getElementById("btn-game").addEventListener("click", async () => {
+        try {
+          if (!window.$game) {
+            log("window.$game 不存在：请确认该窗口由 SeerWindow 打开并使用了 preload");
+            return;
+          }
+          const game = window.$game.newGameClient(3000, "127.0.0.1");
+          game.emit("_is_login", {}, (res) => {
+            log("_is_login 响应：", res);
+            game.stop();
+          });
+        } catch (e) {
+          log("GameClient 调用失败：", String(e && e.message ? e.message : e));
+        }
+      });
+    </script>
+  </body>
+</html>
+

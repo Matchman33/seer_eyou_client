@@ -1,27 +1,35 @@
-import { app, BrowserWindow, Menu } from "electron";
+import { app, BrowserWindow } from "electron";
 import { SeerWindow } from "./src/utils/seerWindows";
+import path from "path";
+import { PluginManager } from "./src/plugins/pluginManager";
 let seerWindow: SeerWindow | null = null;
+let pluginManager: PluginManager | null = null;
 
-const onReady = () => {
-  // 隐藏默认菜单栏
-  Menu.setApplicationMenu(null);
-  // 这是进行测试时候开启的本地端口，是一个vue项目的端口
-  seerWindow = new SeerWindow("http://127.0.0.1:5500/index.html", {
+// Electron 启动后初始化：加载插件、启用插件、应用插件菜单
+const onReady = async () => {
+  // 插件目录固定为运行目录下的 plugins（process.cwd()/plugins）
+  pluginManager = new PluginManager(path.join(process.cwd(), "plugins"));
+  await pluginManager.loadAll();
+  await pluginManager.enableAll();
+  pluginManager.refreshMenu();
+
+  // 默认加载运行目录下的 index.html，保证无需额外启动前端 dev server 也能运行
+  seerWindow = new SeerWindow(path.join(process.cwd(), "index.html"), {
     width: 975,
     height: 640,
     // 网页的title会覆盖窗口标题
     title: "易游插件管理",
   });
 
-  // 监听 F12 按键打开开发者工具
-  // 正式发布应该禁用这个功能
+  // 主窗口单独支持 F12/F5 调试快捷键
   seerWindow.webContents.on("before-input-event", (event, input) => {
-    if (input.type === "keyDown") {
-      if (input.key === "F12") {
-        seerWindow!.webContents.toggleDevTools(); // 打开/关闭开发者工具
-      } else if (input.key === "F5") {
-        seerWindow!.reload(); // 刷新页面
-      }
+    if (input.type !== "keyDown") return;
+    if (input.key === "F12") {
+      seerWindow!.webContents.toggleDevTools();
+      event.preventDefault();
+    } else if (input.key === "F5") {
+      seerWindow!.reload();
+      event.preventDefault();
     }
   });
 
@@ -32,6 +40,11 @@ const onReady = () => {
 };
 
 app.on("ready", onReady);
+
+// 退出前做插件清理：关闭插件窗口、触发 onDisable/onUnload
+app.on("before-quit", () => {
+  void pluginManager?.shutdown();
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
