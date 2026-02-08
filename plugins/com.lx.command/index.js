@@ -1,4 +1,3 @@
-
 module.exports = {
   meta: {
     id: "com.lx.command",
@@ -18,11 +17,13 @@ module.exports = {
       game.on("_onRecvCallback", ({ packet }) => {
         game.emit("onRecvPacket", ctx.game.unpackPacket(packet));
       });
+
       game.on("_onSendCallback", ({ packet }) => {
         game.emit("onSendPacket", ctx.game.unpackPacket(packet));
       });
+
       game.on("sendPacket", (params) => {
-        game.emit("onSendPacket", ctx.game.packPacket(params));
+        game.emit("_send_packet", { packet: ctx.game.packPacket(params) });
       });
     },
     onDisable: async (ctx) => {

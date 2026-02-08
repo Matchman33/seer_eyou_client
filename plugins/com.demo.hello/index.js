@@ -25,11 +25,6 @@ module.exports = {
       ctx.log.info("onLoad");
     },
     onEnable: async (ctx) => {
-      const game = ctx.game.getGameClientInstance();
-      // 监听发包事件
-      game.on("_onLoginCallback", (params) => {
-        ctx.log.info("_onRecvCallback", params);
-      });
       ctx.log.info("onEnable", {
         isDev: ctx.host.isDev,
         pluginId: ctx.plugin.id,
