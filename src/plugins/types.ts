@@ -74,7 +74,20 @@ export type PluginDefinition = {
   menu?: PluginMenuNode[];
   shortcuts?: PluginShortcut[];
 };
-
+ export type Packet = {
+  // 封包长度
+  length: number;
+  // 协议版本号
+  version: number;
+  // 命令号
+  cmd: number;
+  // 米米号
+  account: number;
+  // 校验码
+  checknum: number;
+  // 封包体
+  data: string;
+};
 // 插件上下文：宿主提供给插件的受控能力集合
 export type PluginContext = {
   host: { isDev: boolean };
@@ -98,6 +111,8 @@ export type PluginContext = {
       ) => any;
       stop: () => void;
     };
+    packPacket: (params: Packet) => string;
+    unpackPacket: (packet: string) => Packet;
   };
   ui: {
     openPage: (

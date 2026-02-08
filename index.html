@@ -6,14 +6,12 @@
   </head>
   <script>
     console.log("hello world");
-    // 目前bug，因为保存文件到项目根目录，所以运行时检测到新的文件会导致页面重新加载，从而导致页面无限刷新
-    // 无伤大雅，正式环境下electron不会热更新
-    $win
-      .saveSeerjsFile("test", "console.log('hello world1111111')")
-      .then(() => {
-        console.log(123);
-        console.log($win.runScript("test"));
-      });
+    // $win
+    //   .saveSeerjsFile("test", "console.log('hello world1111111')")
+    //   .then(() => {
+    //     console.log(123);
+    //     console.log($win.runScript("test"));
+    //   });
 
   </script>
   <body>
