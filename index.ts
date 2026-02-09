@@ -9,6 +9,7 @@ const onReady = async () => {
   // 插件目录固定为运行目录下的 plugins（process.cwd()/plugins）
   const pluginManager = PluginManager.getInstance(path.join(process.cwd(), "plugins"));
   await pluginManager.loadAll();
+  // 默认启用所有插件
   await pluginManager.enableAll();
   pluginManager.refreshMenu();
 

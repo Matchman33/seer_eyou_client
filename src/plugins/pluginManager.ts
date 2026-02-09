@@ -382,9 +382,8 @@ export class PluginManager {
         /**
          * 解析游戏封包
          * @param {string} packet 游戏封包，封包为16进制字符串
-         * @returns {object} 解析后的游戏封包对象
+         * @returns {Packet} 解析后的游戏封包对象
          */
-
         unpackPacket: (packet: string): Packet => {
           const length = parseInt(packet.substring(0, 8), 16);
           const version = parseInt(packet.substring(8, 10), 16);
@@ -401,13 +400,12 @@ export class PluginManager {
             data,
           };
         },
-
         /**
          * 将封包对象转换为十六进制字符串
          * @param {object} packet 封包对象
          * @returns {string} 封包的十六进制字符串表示
          */
-        packPacket: (packet: Packet) => {
+        packPacket: (packet: Packet): string => {
           const { length, version, cmd, account, checknum, data } = packet;
           return `${length.toString(16).padStart(8, "0")}${version.toString(16).padStart(2, "0")}${cmd.toString(16).padStart(8, "0")}${account.toString(16).padStart(8, "0")}${checknum.toString(16).padStart(8, "0")}${data}`.toUpperCase();
         },

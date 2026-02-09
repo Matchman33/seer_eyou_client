@@ -89,9 +89,9 @@ commands: {
 
 典型用法：
 
-- 打开页面：`open` 调用 `ctx.ui.openPage(...)`
-- 控制窗口：`window.reload` / `window.toggleDevTools` 等
-- 发起 GameClient 事件：使用 `ctx.game.newGameClient`
+- 打开页面：`open` 调用 `ctx.ui.openPage(...)``
+- 控制窗口：使用 `ctx.ui.reload` / `ctx.ui.toggleDevTools` / `ctx.ui.closeWindow` 等
+- 发起 GameClient 事件：使用 `ctx.game.getGameClientInstance`
 
 ### 2.4 ui（可选）
 
@@ -263,7 +263,7 @@ ctx.log: {
 封包通信接口，基于 `seer_eyou_js` 的 `GameClient`：
 
 ```ts
-ctx.game.newGameClient(
+ctx.game.getGameClientInstance(
   port: number = 3000,
   ip: string = "127.0.0.1",
 ): {
@@ -275,12 +275,20 @@ ctx.game.newGameClient(
   ) => any;
   stop: () => void;
 };
+
+// 封包解析与打包工具
+ctx.game.unpackPacket(packet: string): Packet;
+ctx.game.packPacket(packet: Packet): string;
 ```
+
+**单例模式说明**：
+- `getGameClientInstance` 采用单例模式，同一个插件内多次调用返回同一个实例
+- 调用 `stop()` 后会关闭连接并清空实例，下次调用会创建新实例
 
 典型用法：
 
 ```js
-const game = ctx.game.newGameClient();
+const game = ctx.game.getGameClientInstance();
 
 game.on("_onLoginCallback", (data) => {
   ctx.log.info("login result", data);
@@ -290,6 +298,22 @@ game.emit("_is_login", {}, (res) => {
   ctx.log.info("is_login:", res);
   game.stop();
 });
+
+// 封包解析示例
+const packet = "00000008010000000000000000000000";
+const parsed = ctx.game.unpackPacket(packet);
+ctx.log.info("parsed packet:", parsed);
+
+// 封包打包示例
+const packed = ctx.game.packPacket({
+  length: 8,
+  version: 1,
+  cmd: 0,
+  account: 0,
+  checknum: 0,
+  data: ""
+});
+ctx.log.info("packed packet:", packed);
 ```
 
 ### 3.5 ctx.ui
