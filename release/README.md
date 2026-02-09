@@ -5,7 +5,7 @@
 请将以下三个 DLL 文件复制到指定目录：
 
 - baselib.dll → D:\SeerLauncher\games\NewSeer\
-- seer_baselib.dll → D:\SeerLauncher\games\NewSeer\
+- baselib_orig.dll → D:\SeerLauncher\games\NewSeer\
 - gameServer.dll → D:\SeerLauncher\games\NewSeer\
 
 说明：
