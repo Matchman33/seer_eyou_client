@@ -427,13 +427,17 @@ export class PluginManager {
           }
 
           const windowId = nanoid();
-          const win = new SeerWindow(resolvedEntry, {
-            width: page.window?.width,
-            height: page.window?.height,
-            resizable: page.window?.resizable,
-            title: page.window?.title ?? page.title,
-            ...options,
-          });
+          const win = new SeerWindow(
+            resolvedEntry,
+            {
+              width: page.window?.width,
+              height: page.window?.height,
+              resizable: page.window?.resizable,
+              title: page.window?.title ?? page.title,
+              ...options,
+            },
+            [`--pluginId=${pluginId}`, `--pluginDir=${this.pluginsDir}`],
+          );
 
           // 如果页面声明了专属菜单，则只为该窗口设置这一份菜单
           const pageMenu = this.buildWindowMenuTemplateWithWindowId(
@@ -479,6 +483,9 @@ export class PluginManager {
         reload: (windowId: string) => {
           const win = this.windows.get(windowId);
           win?.reload();
+        },
+        getWindow: (windowId: string) => {
+          return this.windows.get(windowId);
         },
         toggleDevTools: (windowId: string) => {
           const win = this.windows.get(windowId);
