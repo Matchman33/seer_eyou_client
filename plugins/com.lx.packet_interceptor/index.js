@@ -1,4 +1,3 @@
-
 module.exports = {
   meta: {
     id: "com.lx.packet_interceptor",
@@ -31,14 +30,6 @@ module.exports = {
     },
   },
 
-  shortcuts: [
-    {
-      id: "toggleDevToolsGlobal",
-      key: "F12",
-      command: "window.toggleDevTools",
-    },
-  ],
-
   commands: {
     openPage: (ctx) => {
       ctx.ui.openPage("home").then(({ windowId }) => {
@@ -47,9 +38,6 @@ module.exports = {
           console.log("修改封包拦截窗口大小", newBounds);
         });
       });
-    },
-    toggleDevTools: (ctx) => {
-      ctx.ui.toggleDevTools(windowId);
     },
   },
 
