@@ -86,7 +86,7 @@ export type PluginDefinition = {
   // 米米号
   account: number;
   // 校验码
-  checknum: number;
+  checksum: number;
   // 封包体
   data: string;
 };

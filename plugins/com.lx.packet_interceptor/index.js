@@ -1,3 +1,5 @@
+const { shortcuts } = require("../com.demo.hello");
+
 module.exports = {
   meta: {
     id: "com.lx.packet_interceptor",
@@ -14,9 +16,13 @@ module.exports = {
     onEnable: async (ctx) => {
       const game = ctx.game.getGameClientInstance();
       // 监听发包事件
-      game.on("onRecvPacket", ({ packet }) => {});
+      game.on("onRecvPacket", ({ packet }) => {
+        ctx.log.info("收到封包:", packet);
+      });
 
-      game.on("onSendPacket", ({ packet }) => {});
+      game.on("onSendPacket", ({ packet }) => {
+        ctx.log.info("发送封包:", packet);
+      });
     },
     onDisable: async (ctx) => {
       ctx.log.info("onDisable");
@@ -26,15 +32,25 @@ module.exports = {
     },
   },
 
+  shortcuts: [
+    {
+      id: "toggleDevToolsGlobal",
+      key: "F12",
+      command: "window.toggleDevTools",
+    },
+  ],
+
   commands: {
     openPage: (ctx) => {
       ctx.ui.openPage("home").then(({ windowId }) => {
-        ctx.ui.toggleDevTools(windowId);
         // 监听窗口大小改变的事件
         ctx.ui.getWindow(windowId).on("will-resize", (event, newBounds) => {
-          console.log(newBounds);
+          console.log("修改封包拦截窗口大小", newBounds);
         });
       });
+    },
+    toggleDevTools: (ctx) => {
+      ctx.ui.toggleDevTools(windowId);
     },
   },
 
@@ -43,7 +59,7 @@ module.exports = {
       {
         id: "home",
         title: "封包拦截器",
-        entry: "http://localhost:5173/",
+        entry: "ui/index.html",
         window: { width: 1289, height: 770, resizable: true },
       },
     ],
