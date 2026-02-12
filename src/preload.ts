@@ -9,8 +9,42 @@ import {
 } from "./utils/fileUtils";
 import { GameClient } from "seer_eyou_js";
 import { Packet } from "./plugins/types";
+import path from "path";
+import fs from "fs/promises";
+const readStorage = async (): Promise<Record<string, any>> => {
+  try {
+    const buf = await fs.readFile(storagePath, "utf-8");
+    const parsed = JSON.parse(buf);
+    if (parsed && typeof parsed === "object") return parsed;
+    return {};
+  } catch {
+    return {};
+  }
+};
+const writeStorage = async (data: Record<string, any>): Promise<void> => {
+  await fs.mkdir(path.dirname(storagePath), { recursive: true });
+  await fs.writeFile(storagePath, JSON.stringify(data, null, 2), "utf-8");
+};
+const parsePluginArgs = () => {
+  const meta: Record<string, string> = {};
 
-console.log("preload.ts loaded");
+  for (const arg of process.argv) {
+    if (arg.startsWith("--plugin")) {
+      const [key, value] = arg.substring(2).split("=");
+      const metaKey = key.replace("plugin", "").toLowerCase();
+      meta[metaKey] = value;
+    }
+  }
+
+  return meta;
+};
+const pluginMeta = parsePluginArgs();
+const storagePath = path.join(
+  pluginMeta.dir,
+  ".storage",
+  `${pluginMeta.id}.json`,
+);
+console.log("preload.ts loaded", storagePath);
 
 // 单例实例，每个页面独立
 let game: GameClient | null = null;
@@ -31,11 +65,25 @@ contextBridge.exposeInMainWorld("$game", {
         params: any,
         callback: (...args: any[]) => any,
       ) => game!.emit(eventName, params, callback),
+      off: (eventName: string) => game!.off(eventName),
       stop: () => {
         game?.close();
         game = null;
       },
     };
+  },
+  pluginMeta,
+
+  storage: {
+    get: async (key: string) => {
+      const data = await readStorage();
+      return data[key];
+    },
+    set: async (key: string, value: any) => {
+      const data = await readStorage();
+      data[key] = value;
+      await writeStorage(data);
+    },
   },
 
   unpackPacket: (packet: string): Packet => {
@@ -43,14 +91,14 @@ contextBridge.exposeInMainWorld("$game", {
     const version = parseInt(packet.substring(8, 10), 16);
     const cmd = parseInt(packet.substring(10, 18), 16);
     const account = parseInt(packet.substring(18, 26), 16);
-    const checknum = parseInt(packet.substring(26, 34), 16);
+    const checksum = parseInt(packet.substring(26, 34), 16);
     const data = packet.substring(34, packet.length);
     return {
       length,
       version,
       cmd,
       account,
-      checknum,
+      checksum,
       data,
     };
   },
@@ -61,8 +109,8 @@ contextBridge.exposeInMainWorld("$game", {
    * @returns {string} 封包的十六进制字符串表示
    */
   packPacket: (packet: Packet): string => {
-    const { length, version, cmd, account, checknum, data } = packet;
-    return `${length.toString(16).padStart(8, "0")}${version.toString(16).padStart(2, "0")}${cmd.toString(16).padStart(8, "0")}${account.toString(16).padStart(8, "0")}${checknum.toString(16).padStart(8, "0")}${data}`.toUpperCase();
+    const { length, version, cmd, account, checksum, data } = packet;
+    return `${length.toString(16).padStart(8, "0")}${version.toString(16).padStart(2, "0")}${cmd.toString(16).padStart(8, "0")}${account.toString(16).padStart(8, "0")}${checksum.toString(16).padStart(8, "0")}${data}`.toUpperCase();
   },
 });
 

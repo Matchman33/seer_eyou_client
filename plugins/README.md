@@ -310,7 +310,7 @@ const packed = ctx.game.packPacket({
   version: 1,
   cmd: 0,
   account: 0,
-  checknum: 0,
+  checksum: 0,
   data: ""
 });
 ctx.log.info("packed packet:", packed);

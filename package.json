@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "nanoid": "^5.1.6",
-    "seer_eyou_js": "^1.0.0"
+    "seer_eyou_js": "^1.0.1"
   }
 }

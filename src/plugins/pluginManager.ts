@@ -389,14 +389,14 @@ export class PluginManager {
           const version = parseInt(packet.substring(8, 10), 16);
           const cmd = parseInt(packet.substring(10, 18), 16);
           const account = parseInt(packet.substring(18, 26), 16);
-          const checknum = parseInt(packet.substring(26, 34), 16);
+          const checksum = parseInt(packet.substring(26, 34), 16);
           const data = packet.substring(34, packet.length);
           return {
             length,
             version,
             cmd,
             account,
-            checknum,
+            checksum,
             data,
           };
         },
@@ -406,8 +406,8 @@ export class PluginManager {
          * @returns {string} 封包的十六进制字符串表示
          */
         packPacket: (packet: Packet): string => {
-          const { length, version, cmd, account, checknum, data } = packet;
-          return `${length.toString(16).padStart(8, "0")}${version.toString(16).padStart(2, "0")}${cmd.toString(16).padStart(8, "0")}${account.toString(16).padStart(8, "0")}${checknum.toString(16).padStart(8, "0")}${data}`.toUpperCase();
+          const { length, version, cmd, account, checksum, data } = packet;
+          return `${length.toString(16).padStart(8, "0")}${version.toString(16).padStart(2, "0")}${cmd.toString(16).padStart(8, "0")}${account.toString(16).padStart(8, "0")}${checksum.toString(16).padStart(8, "0")}${data}`.toUpperCase();
         },
       },
       ui: {
@@ -427,13 +427,17 @@ export class PluginManager {
           }
 
           const windowId = nanoid();
-          const win = new SeerWindow(resolvedEntry, {
-            width: page.window?.width,
-            height: page.window?.height,
-            resizable: page.window?.resizable,
-            title: page.window?.title ?? page.title,
-            ...options,
-          });
+          const win = new SeerWindow(
+            resolvedEntry,
+            {
+              width: page.window?.width,
+              height: page.window?.height,
+              resizable: page.window?.resizable,
+              title: page.window?.title ?? page.title,
+              ...options,
+            },
+            [`--pluginId=${pluginId}`, `--pluginDir=${this.pluginsDir}`],
+          );
 
           // 如果页面声明了专属菜单，则只为该窗口设置这一份菜单
           const pageMenu = this.buildWindowMenuTemplateWithWindowId(
@@ -479,6 +483,9 @@ export class PluginManager {
         reload: (windowId: string) => {
           const win = this.windows.get(windowId);
           win?.reload();
+        },
+        getWindow: (windowId: string) => {
+          return this.windows.get(windowId);
         },
         toggleDevTools: (windowId: string) => {
           const win = this.windows.get(windowId);

@@ -1,3 +1,5 @@
+import { SeerWindow } from "../utils/seerWindows";
+
 // 插件生命周期：宿主会在不同阶段调用这些钩子
 export type PluginLifecycle = {
   onLoad?: (ctx: PluginContext) => void | Promise<void>;
@@ -84,7 +86,7 @@ export type PluginDefinition = {
   // 米米号
   account: number;
   // 校验码
-  checknum: number;
+  checksum: number;
   // 封包体
   data: string;
 };
@@ -123,6 +125,7 @@ export type PluginContext = {
     setMenu: (windowId: string, nodes?: PluginMenuNode[]) => void;
     reload: (windowId: string) => void;
     toggleDevTools: (windowId: string) => void;
+    getWindow: (windowId: string) => SeerWindow | undefined;
   };
   menu: { refresh: () => void };
   storage: {

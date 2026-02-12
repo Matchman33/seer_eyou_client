@@ -1,7 +1,5 @@
 import { BrowserWindow } from "electron";
 import path from "path";
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
 
 /**
  * 窗口封装类（组合而非继承）
@@ -24,6 +22,7 @@ export class SeerWindow {
   constructor(
     url: string,
     options: Electron.BrowserWindowConstructorOptions = {},
+    additionalArguments: string[] = [],
   ) {
     this.win = new BrowserWindow({
       useContentSize: true,
@@ -43,6 +42,7 @@ export class SeerWindow {
         // 预加载脚本，用于与electron API交互
         // 预加载脚本路径使用编译好的js文件路径而不是开发环境中的ts文件路径
         preload: path.join(__dirname, "../preload.js"),
+        additionalArguments,
       },
       ...options,
     });
