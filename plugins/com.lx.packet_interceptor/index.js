@@ -39,6 +39,9 @@ module.exports = {
         });
       });
     },
+    toggleDevTools: (ctx) => {
+      ctx.ui.toggleDevTools(windowId);
+    },
   },
 
   ui: {
